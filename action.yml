@@ -50,20 +50,8 @@ runs:
 
         echo "Constructed filters: $filters"
 
-        # Define the path to the script
-        script_path="$GITHUB_ACTION_PATH/wait-for-step-function.sh"
-
-        # Check if the script exists
-        if [[ ! -f "$script_path" ]]; then
-          echo "[ERROR] Script not found at $script_path" >&2
-          exit 1
-        fi
-
-        # Make sure the script has execute permissions
-        chmod +x "$script_path"
-
         # Execute the monitoring script with the constructed arguments
-        bash "$script_path" \
+        bash "${{ github.action_path }}/wait-for-step-function.sh" \
           --name "${{ inputs.name }}" \
           $filters \
           --timeout "${{ inputs.timeout }}" \
