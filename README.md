@@ -1,8 +1,5 @@
 # wait-for-step-function
 
-![GitHub Actions](https://img.shields.io/github/actions/workflow/status/your-username/your-repo/wait-for-step-function.yml?branch=main&label=GitHub%20Actions)
-![License](https://img.shields.io/github/license/your-username/your-repo)
-
 - [wait-for-step-function](#wait-for-step-function)
   - [Table of Contents](#table-of-contents)
   - [Description](#description)
