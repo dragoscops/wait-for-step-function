@@ -39,12 +39,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 3: Install jq
-      - name: Install jq
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
-
       # Step 5: Run wait-for-step-function Action
       - name: Run wait-for-step-function Action
         uses: ./
