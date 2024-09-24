@@ -15,6 +15,10 @@ inputs:
     description: Interval (in seconds) to trigger the check for the step function. Default 15
     required: false
     default: 15
+  debug: 
+    description: Debug
+    required: false
+    default: false
 
 runs:
   using: "composite"
