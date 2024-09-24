@@ -1,0 +1,50 @@
+- name: Wait for Step Function Execution
+  shell: bash
+  run: |
+    set -e  # Exit immediately if a command exits with a non-zero status.
+
+    if [[ ${{ inputs.debug }} == "true" ]]; then
+      set -ex
+
+      export DEBUG=1
+    fi
+
+    # Assign the filter JSON input to a variable
+    json="${{ inputs.filter }}"
+    
+    echo "Received filter JSON: $json"
+
+    # Initialize an empty filters string
+    filters=""
+
+    # Convert JSON object into --filter key=value arguments
+    while IFS= read -r line; do
+      key=$(echo "$line" | cut -d'=' -f1)
+      value=$(echo "$line" | cut -d'=' -f2-)
+      # Quote key and value to handle spaces and special characters
+      filters+="--filter \"$key=$value\" "
+    done < <(echo "$json" | jq -r 'to_entries[] | "\(.key)=\(.value)"')
+
+    # Trim trailing space
+    filters=$(echo "$filters" | sed 's/ $//')
+
+    echo "Constructed filters: $filters"
+
+    # Define the path to the script
+    script_path="$GITHUB_ACTION_PATH/wait-for-step-function.sh"
+
+    # Check if the script exists
+    if [[ ! -f "$script_path" ]]; then
+      echo "[ERROR] Script not found at $script_path" >&2
+      exit 1
+    fi
+
+    # Make sure the script has execute permissions
+    chmod +x "$script_path"
+
+    # Execute the monitoring script with the constructed arguments
+    bash "$script_path" \
+      --name "${{ inputs.name }}" \
+      $filters \
+      --timeout "${{ inputs.timeout }}" \
+      --wait-interval "${{ inputs.wait_interval }}"

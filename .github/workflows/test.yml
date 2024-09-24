@@ -1,0 +1,56 @@
+name: Test wait-for-step-function Action
+
+on:
+  workflow_dispatch:
+    inputs:
+      env_name:
+        description: "Environment Name"
+        required: true
+        type: string
+      step_function_name:
+        description: "Name of the Step Function"
+        required: true
+        type: string
+      filter_json:
+        description: 'JSON Object containing the input filters (e.g., ''{"name": "Alice", "age": 30, "city": "Wonderland"}'')'
+        required: true
+        type: string
+      timeout:
+        description: "Timeout value in seconds to wait for the Step Function to complete (default: 3600)"
+        required: false
+        default: "3600"
+        type: string
+      wait_interval:
+        description: "Polling interval in seconds between each check (default: 15)"
+        required: false
+        default: "15"
+        type: string
+      debug:
+        description: "Enable debug mode"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  test_wait_for_step_function:
+    runs-on: ${{ inputs.env_name }}-runner
+    steps:
+      # Step 1: Checkout Repository
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # Step 3: Install jq
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+
+      # Step 5: Run wait-for-step-function Action
+      - name: Run wait-for-step-function Action
+        uses: ./
+        with:
+          name: "${{ inputs.step_function_name }}"
+          filter: "${{ inputs.filter_json }}"
+          timeout: "${{ inputs.timeout }}"
+          wait_interval: "${{ inputs.wait_interval }}"
+          debug: "${{ inputs.debug }}"
