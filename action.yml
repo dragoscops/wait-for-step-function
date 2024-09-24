@@ -34,11 +34,6 @@ runs:
           export DEBUG=1
         fi
 
-        # Assign the filter JSON input to a variable
-        json="${{ inputs.filter }}"
-        
-        echo "Received filter JSON: $json"
-
         # Initialize an empty filters string
         filters=""
 
@@ -48,7 +43,7 @@ runs:
           value=$(echo "$line" | cut -d'=' -f2-)
           # Quote key and value to handle spaces and special characters
           filters+="--filter \"$key=$value\" "
-        done < <(echo "$json" | jq -r 'to_entries[] | "\(.key)=\(.value)"')
+        done < <(echo '${{ inputs.filter }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"')
 
         # Trim trailing space
         filters=$(echo "$filters" | sed 's/ $//')
