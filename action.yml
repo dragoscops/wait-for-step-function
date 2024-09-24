@@ -25,9 +25,7 @@ runs:
   steps:
     - name: Wait for Step Function Execution
       shell: bash
-      run: |
-        sudo yum install jq -y
-        
+      run: |        
         set -e  # Exit immediately if a command exits with a non-zero status.
 
         if [[ ${{ inputs.debug }} == "true" ]]; then
