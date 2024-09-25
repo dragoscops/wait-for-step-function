@@ -34,26 +34,22 @@ runs:
           export DEBUG=1
         fi
 
-        # Initialize an empty filters string
-        filters=""
+        # Initialize an empty array for filters
+        filters=()
 
         # Convert JSON object into --filter key=value arguments
         while IFS= read -r line; do
           key=$(echo "$line" | cut -d'=' -f1)
           value=$(echo "$line" | cut -d'=' -f2-)
-          # Quote key and value to handle spaces and special characters
-          filters+="--filter \"$key=$value\" "
-        done < <(echo '${{ inputs.filter }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"')
+          # Append to the filters array
+          filters+=(--filter "$key=$value")
+        done < <(echo "${{ inputs.filter }}" | jq -r 'to_entries[] | "\(.key)=\(.value)"')
 
-        # Trim trailing space
-        filters=$(echo "$filters" | sed 's/ $//')
-
-        echo "Constructed filters: $filters"
+        echo "Constructed filters: ${filters[*]}"
 
         # Execute the monitoring script with the constructed arguments
         bash "${{ github.action_path }}/wait-for-step-function.sh" \
           --name "${{ inputs.name }}" \
-          $filters \
+          "${filters[@]}" \
           --timeout "${{ inputs.timeout }}" \
           --wait-interval "${{ inputs.wait_interval }}"
-    
